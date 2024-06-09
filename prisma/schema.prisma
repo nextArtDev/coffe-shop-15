@@ -1,0 +1,473 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String  @id @default(cuid())
+  phone      String  @unique
+  name       String
+  password   String
+  image      Image?  @relation(fields: [imageId], references: [id])
+  role       Role    @default(USER)
+  isVerified Boolean @default(false)
+
+  verificationCode Int?
+  verificationDate DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  imageId   String?
+  Review    Review[]
+
+  posts      Post[]
+  saved      SavedPost[]
+  likes      Like[]
+  comments   Comment[]
+  followedBy Follows[]   @relation("following")
+  following  Follows[]   @relation("follower")
+
+  username String? @unique
+  bio      String?
+  website  String?
+  gender   String?
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model Image {
+  id         String   @id @default(cuid())
+  url        String   @db.Text
+  key        String   @db.Text
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  user        User[]
+  Store       Store?     @relation(fields: [storeId], references: [id])
+  storeId     String?
+  Billboard   Billboard? @relation(fields: [billboardId], references: [id])
+  billboardId String?
+  Category    Category?  @relation(fields: [categoryId], references: [id])
+  categoryId  String?
+  Product     Product?   @relation(fields: [productId], references: [id])
+  productId   String?
+
+  // Breakfast        Breakfast?      @relation(fields: [breakfastId], references: [id])
+  // breakfastId      Int?
+  // CakeAndDessert   CakeAndDessert? @relation(fields: [cakeAndDessertId], references: [id])
+  // cakeAndDessertId Int?
+  // Coffee           Coffee?         @relation(fields: [coffeeId], references: [id])
+  // coffeeId         Int?
+  // ColdDrink        ColdDrink?      @relation(fields: [coldDrinkId], references: [id])
+  // coldDrinkId      Int?
+  // Milkshake        Milkshake?      @relation(fields: [milkshakeId], references: [id])
+  // milkshakeId      Int?
+  // Mocktail         Mocktail?       @relation(fields: [mocktailId], references: [id])
+  // mocktailId       Int?
+  // ColdBar          ColdBar?        @relation(fields: [coldBarId], references: [id])
+  // coldBarId        Int?
+  // HotDrink         HotDrink?       @relation(fields: [hotDrinkId], references: [id])
+  // hotDrinkId       Int?
+  // Tea              Tea?            @relation(fields: [teaId], references: [id])
+  // teaId            Int?
+  // Herbal           Herbal?         @relation(fields: [herbalId], references: [id])
+  // herbalId         Int?
+  // Infusion         Infusion?       @relation(fields: [infusionId], references: [id])
+  // infusionId       Int?
+  Post   Post?   @relation(fields: [postId], references: [id])
+  postId String?
+}
+
+model Store {
+  id         String      @id @default(uuid())
+  name       String      @unique
+  userId     String
+  billboards Billboard[] @relation("StoreToBillboard")
+  categories Category[]  @relation("StoreToCategory")
+  products   Product[]   @relation("StoreToProduct")
+  orders     Order[]     @relation("StoreToOrder")
+  reviews    Review[]    @relation("StoreToReview")
+  images     Image[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Billboard {
+  id         String     @id @default(uuid())
+  label      String
+  images     Image[]
+  storeId    String
+  store      Store      @relation("StoreToBillboard", fields: [storeId], references: [id])
+  categories Category[]
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  @@index([storeId])
+}
+
+model Category {
+  id          String    @id @default(uuid())
+  name        String
+  description String?   @db.Text
+  images      Image[]
+  storeId     String // Foreign Key to Store
+  store       Store     @relation("StoreToCategory", fields: [storeId], references: [id])
+  billboardId String // Foreign Key to Billboard
+  billboard   Billboard @relation(fields: [billboardId], references: [id])
+  products    Product[] @relation("CategoryToProduct")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([storeId])
+  @@index([billboardId])
+}
+
+model Product {
+  id String @id @default(uuid())
+
+  name String
+
+  description String? @db.Text
+
+  price        Decimal
+  caffeine     Decimal?
+  sugarContent Decimal?
+
+  isHot      Boolean  @default(true)
+  isDairy    Boolean? @default(false) //labaniati
+  isFeatured Boolean  @default(false)
+  isArchived Boolean  @default(false)
+
+  // breakfastId      Int?
+  // breakfast        Breakfast?      @relation(fields: [breakfastId], references: [id])
+  // cakeAndDessertId Int?
+  // cakeAndDessert   CakeAndDessert? @relation(fields: [cakeAndDessertId], references: [id])
+  ingredients Ingredients[]
+  images      Image[] // Relation to Image model
+  reviews     Review[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  store      Store    @relation("StoreToProduct", fields: [storeId], references: [id])
+  category   Category @relation("CategoryToProduct", fields: [categoryId], references: [id])
+  storeId    String // Foreign Key to Store
+  categoryId String // Foreign Key to Category
+
+  orderItems OrderItem[] // Relation to Order model
+  // @@index([breakfastId])
+  // @@index([cakeAndDessertId])
+
+  @@index([storeId])
+  @@index([categoryId])
+}
+
+model Review {
+  id Int @id @default(autoincrement())
+
+  comment String
+  rating  Int
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  storeId String
+  store   Store  @relation("StoreToReview", fields: [storeId], references: [id])
+
+  user      User?    @relation(fields: [userId], references: [id])
+  userId    String?
+  Product   Product? @relation(fields: [productId], references: [id])
+  productId String?
+
+  // Breakfast        Breakfast?      @relation(fields: [breakfastId], references: [id])
+  // breakfastId      Int?
+  // CakeAndDessert   CakeAndDessert? @relation(fields: [cakeAndDessertId], references: [id])
+  // cakeAndDessertId Int?
+  // Coffee           Coffee?         @relation(fields: [coffeeId], references: [id])
+  // coffeeId         Int?
+  // ColdDrink        ColdDrink?      @relation(fields: [coldDrinkId], references: [id])
+  // coldDrinkId      Int?
+  // Milkshake        Milkshake?      @relation(fields: [milkshakeId], references: [id])
+  // milkshakeId      Int?
+  // Mocktail         Mocktail?       @relation(fields: [mocktailId], references: [id])
+  // mocktailId       Int?
+  // ColdBar          ColdBar?        @relation(fields: [coldBarId], references: [id])
+  // coldBarId        Int?
+  // HotDrink         HotDrink?       @relation(fields: [hotDrinkId], references: [id])
+  // hotDrinkId       Int?
+  // Tea              Tea?            @relation(fields: [teaId], references: [id])
+  // teaId            Int?
+  // Herbal           Herbal?         @relation(fields: [herbalId], references: [id])
+  // herbalId         Int?
+  // Infusion         Infusion?       @relation(fields: [infusionId], references: [id])
+  // infusionId       Int?
+
+  @@index([userId])
+  @@index([productId])
+}
+
+model Order {
+  id         String      @id @default(uuid())
+  storeId    String
+  Authority  BigInt      @unique
+  RefID      Int
+  store      Store       @relation("StoreToOrder", fields: [storeId], references: [id])
+  orderItems OrderItem[]
+  isPaid     Boolean     @default(false)
+  phone      String      @default("")
+  address    String      @default("")
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  @@index([storeId])
+}
+
+// Intermediary for a many-to-many relationship
+model OrderItem {
+  id        String  @id @default(uuid())
+  orderId   String // Foreign Key to Order
+  order     Order   @relation(fields: [orderId], references: [id])
+  productId String // Foreign Key to Product
+  product   Product @relation(fields: [productId], references: [id])
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+// model Coffee {
+//   id          Int      @id @default(autoincrement())
+//   name        String   @unique
+//   isHot       Boolean  @default(true)
+//   price       Decimal  @default(3.5)
+//   caffeine    Decimal  @default(95.0)
+//   description String
+//   images      Image[]
+//   reviews     Review[]
+// }
+
+// model ColdDrink {
+//   id           Int      @id @default(autoincrement())
+//   name         String   @unique
+//   isHot        Boolean  @default(false)
+//   price        Decimal  @default(2.5)
+//   sugarContent Decimal  @default(20.0)
+//   description  String
+//   images       Image[]
+//   reviews      Review[]
+// }
+
+// model Breakfast {
+//   id       Int       @id @default(autoincrement())
+//   name     String
+//   products Product[]
+
+//   images Image[] // Relation to Image model
+
+//   reviews Review[]
+
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+// }
+
+// model CakeAndDessert {
+//   id       Int       @id @default(autoincrement())
+//   name     String
+//   products Product[]
+//   images   Image[] // Relation to Image model
+
+//   reviews Review[]
+
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+// }
+
+// model Milkshake {
+//   id          Int      @id @default(autoincrement())
+//   name        String   @unique
+//   isHot       Boolean  @default(false)
+//   price       Decimal
+//   dairy       Boolean  @default(true) //labaniati
+//   description String
+//   images      Image[]
+//   reviews     Review[]
+
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+// }
+
+// model Mocktail {
+//   id    Int     @id @default(autoincrement())
+//   name  String  @unique
+//   isHot Boolean @default(false)
+//   price Decimal
+
+//   description String
+//   images      Image[]
+//   reviews     Review[]
+
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+// }
+
+// model ColdBar {
+//   id   Int    @id @default(autoincrement())
+//   name String @unique
+
+//   price       Decimal
+//   isHot       Boolean  @default(false)
+//   description String
+//   images      Image[]
+//   reviews     Review[]
+//   createdAt   DateTime @default(now())
+//   updatedAt   DateTime @updatedAt
+// }
+
+// model HotDrink {
+//   id          Int     @id @default(autoincrement())
+//   name        String  @unique
+//   isHot       Boolean @default(true)
+//   price       Decimal @default(3.0)
+//   caffeine    Decimal @default(80.0)
+//   description String
+
+//   images    Image[]
+//   reviews   Review[]
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+// }
+
+// model Tea {
+//   id          Int      @id @default(autoincrement())
+//   name        String   @unique
+//   isHot       Boolean  @default(true)
+//   price       Decimal
+//   caffeine    Decimal  @default(47.0)
+//   description String
+//   images      Image[]
+//   reviews     Review[]
+
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+// }
+
+// model Herbal {
+//   id          Int           @id @default(autoincrement())
+//   name        String        @unique
+//   isHot       Boolean       @default(true)
+//   price       Decimal
+//   ingredients Ingredients[]
+//   description String
+
+//   images    Image[]
+//   reviews   Review[]
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+// }
+
+// model Infusion {
+//   id          Int           @id @default(autoincrement())
+//   name        String        @unique
+//   isHot       Boolean       @default(true)
+//   price       Decimal
+//   ingredients Ingredients[]
+//   description String
+
+//   images    Image[]
+//   reviews   Review[]
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+// }
+
+model Ingredients {
+  id Int @id @default(autoincrement())
+
+  name    String    @unique
+  // herbal    Herbal[]
+  // infusion  Infusion[]
+  Product Product[]
+}
+
+model Follows {
+  follower    User   @relation("follower", fields: [followerId], references: [id])
+  followerId  String
+  following   User   @relation("following", fields: [followingId], references: [id])
+  followingId String
+
+  @@id([followerId, followingId])
+  @@index([followerId])
+  @@index([followingId])
+}
+
+model Post {
+  id        String      @id @default(cuid())
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  caption   String?     @db.Text
+  // fileUrl   String      @unique
+  fileUrl   Image[]
+  likes     Like[]
+  savedBy   SavedPost[]
+  comments  Comment[]
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String      @map("user_id")
+
+  @@index([userId])
+}
+
+model SavedPost {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId    String
+  userId    String   @map("user_id")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
+  @@index([userId])
+}
+
+model Like {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId    String
+  userId    String   @map("user_id")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
+  @@index([userId])
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  body      String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId    String
+  userId    String   @map("user_id")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([postId])
+  @@index([userId])
+}
