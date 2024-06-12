@@ -3,16 +3,17 @@ import Post from './Post'
 import LoadMore from '../share/LoadMore'
 
 async function Posts() {
-  const posts = await fetchPostsInfinitely({})
+  // const posts = await fetchPostsInfinitely({})
+  const posts = await fetchPosts()
 
   return (
     <section>
       <section className="w-full space-y-20 ">
-        {posts.data.map((post) => (
+        {posts.map((post) => (
           <Post key={post.id} post={post} />
         ))}
       </section>
-      <LoadMore />
+      {/* <LoadMore /> */}
     </section>
   )
 }

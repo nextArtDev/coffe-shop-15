@@ -1,8 +1,18 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-     experimental: {
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'mye-commerce.storage.iran.liara.space',
+        port: '',
+        // pathname: '/account123/**',
+      },
+    ],
+  },
+  experimental: {
     reactCompiler: true,
   },
-};
+}
 
-export default nextConfig;
+export default nextConfig
