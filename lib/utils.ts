@@ -55,3 +55,13 @@ export function timestamp(date: Date): string {
     // },
   })
 }
+
+export const formatter = new Intl.NumberFormat('fa-IR', {
+  style: 'decimal',
+  //   style: 'currency',
+  currency: 'IRT',
+})
+
+export function getFarsiBoolean(value: boolean): string {
+  return value ? 'بلی' : 'خیر'
+}
