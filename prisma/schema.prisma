@@ -93,19 +93,20 @@ model Image {
   Post          Post?        @relation(fields: [postId], references: [id])
   postId        String?
   Ingredients   Ingredients? @relation(fields: [ingredientsId], references: [id])
-  ingredientsId Int?
+  ingredientsId String?
 }
 
 model Store {
-  id         String      @id @default(uuid())
-  name       String      @unique
-  userId     String
-  billboards Billboard[] @relation("StoreToBillboard")
-  categories Category[]  @relation("StoreToCategory")
-  products   Product[]   @relation("StoreToProduct")
-  orders     Order[]     @relation("StoreToOrder")
-  reviews    Review[]    @relation("StoreToReview")
-  images     Image[]
+  id          String        @id @default(uuid())
+  name        String        @unique
+  userId      String
+  billboards  Billboard[]   @relation("StoreToBillboard")
+  categories  Category[]    @relation("StoreToCategory")
+  products    Product[]     @relation("StoreToProduct")
+  orders      Order[]       @relation("StoreToOrder")
+  reviews     Review[]      @relation("StoreToReview")
+  images      Image[]
+  ingredients Ingredients[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -204,6 +205,9 @@ model Review {
   Product   Product? @relation(fields: [productId], references: [id])
   productId String?
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   // Breakfast        Breakfast?      @relation(fields: [breakfastId], references: [id])
   // breakfastId      Int?
   // CakeAndDessert   CakeAndDessert? @relation(fields: [cakeAndDessertId], references: [id])
@@ -254,6 +258,9 @@ model OrderItem {
   order     Order   @relation(fields: [orderId], references: [id])
   productId String // Foreign Key to Product
   product   Product @relation(fields: [productId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([orderId])
   @@index([productId])
@@ -404,13 +411,23 @@ model OrderItem {
 // }
 
 model Ingredients {
-  id     Int     @id @default(autoincrement())
-  images Image[]
+  id String @id @default(uuid())
 
-  name    String    @unique
+  name    String @unique
   // herbal    Herbal[]
   // infusion  Infusion[]
-  Product Product[]
+  storeId String
+  store   Store  @relation(fields: [storeId], references: [id])
+
+  Product   Product? @relation(fields: [productId], references: [id])
+  productId String?
+
+  images    Image[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([storeId])
+  @@index([productId])
 }
 
 model Follows {
