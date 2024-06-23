@@ -60,9 +60,12 @@ model Image {
   storeId     String?
   Billboard   Billboard? @relation(fields: [billboardId], references: [id])
   billboardId String?
-  Category    Category?  @relation(fields: [categoryId], references: [id])
-  categoryId  String?
-  Product     Product?   @relation(fields: [productId], references: [id])
+
+  Category   Category? @relation("images", fields: [categoryId], references: [id])
+  categoryId String?
+
+  CategoryCup Category? @relation("categoryCupImage")
+  Product     Product?  @relation(fields: [productId], references: [id])
   productId   String?
 
   // Breakfast        Breakfast?      @relation(fields: [breakfastId], references: [id])
@@ -87,8 +90,10 @@ model Image {
   // herbalId         Int?
   // Infusion         Infusion?       @relation(fields: [infusionId], references: [id])
   // infusionId       Int?
-  Post   Post?   @relation(fields: [postId], references: [id])
-  postId String?
+  Post          Post?        @relation(fields: [postId], references: [id])
+  postId        String?
+  Ingredients   Ingredients? @relation(fields: [ingredientsId], references: [id])
+  ingredientsId Int?
 }
 
 model Store {
@@ -120,10 +125,14 @@ model Billboard {
 }
 
 model Category {
-  id          String    @id @default(uuid())
+  id          String  @id @default(uuid())
   name        String
-  description String?   @db.Text
-  images      Image[]
+  description String? @db.Text
+  images      Image[] @relation("images")
+
+  categoryCupImage Image?  @relation("categoryCupImage", fields: [imageId], references: [id])
+  imageId          String? @unique
+
   storeId     String // Foreign Key to Store
   store       Store     @relation("StoreToCategory", fields: [storeId], references: [id])
   billboardId String // Foreign Key to Billboard
@@ -134,6 +143,7 @@ model Category {
   updatedAt DateTime @updatedAt
 
   @@index([storeId])
+  @@index([imageId])
   @@index([billboardId])
 }
 
@@ -394,7 +404,8 @@ model OrderItem {
 // }
 
 model Ingredients {
-  id Int @id @default(autoincrement())
+  id     Int     @id @default(autoincrement())
+  images Image[]
 
   name    String    @unique
   // herbal    Herbal[]
