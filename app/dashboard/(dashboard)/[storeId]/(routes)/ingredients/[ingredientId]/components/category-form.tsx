@@ -38,6 +38,7 @@ import ImageSlider from '@/components/dashboard/ImageSlider'
 import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { createCategory } from '@/lib/actions/dashboard/category'
 import {
+  createIngredient,
   deleteIngredient,
   editIngredient,
 } from '@/lib/actions/dashboard/ingredient'
@@ -48,6 +49,7 @@ type IngredientFormValues = z.infer<typeof createIngredientSchema>
 //if there is any billboard its Billboard, else its null
 interface IngredientFormProps {
   //there is a chance to have no initial data and in fact we're creating one.
+
   initialData:
     | (Partial<Ingredients> & { images: { url: string }[] | null })
     | null
@@ -147,7 +149,7 @@ export const IngredientForm: React.FC<IngredientFormProps> = ({
         })
       } else {
         startTransition(() => {
-          createCategory(formData, params.storeId as string, path)
+          createIngredient(formData, params.storeId as string, path)
             .then((res) => {
               if (res?.errors?.name) {
                 form.setError('name', {

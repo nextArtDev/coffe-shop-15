@@ -15,11 +15,6 @@ const IngredientPage = async ({
     },
   })
   //if any 'billboardId' we'll gonna use that as initial data, if not just we route here to create a new billboard
-  const billboards = await prisma.billboard.findMany({
-    where: {
-      storeId: params.storeId,
-    },
-  })
 
   return (
     <div className="flex-col">

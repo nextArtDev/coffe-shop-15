@@ -56,11 +56,11 @@ export function MainNav({
       label: 'محصولات',
       active: pathname === `/dashboard/${params.storeId}/products`,
     },
-    // {
-    //   href: `/dashboard/${params.storeId}/contributors`,
-    //   label: 'فعالین',
-    //   active: pathname === `/dashboard/${params.storeId}/contributors`,
-    // },
+    {
+      href: `/dashboard/${params.storeId}/ingredients`,
+      label: 'مخلفات',
+      active: pathname === `/dashboard/${params.storeId}/ingredients`,
+    },
     // {
     //   href: `/dashboard/${params.storeId}/colors`,
     //   label: 'رنگ‌ها',

@@ -48,7 +48,7 @@ export const createProductSchema = z.object({
     .optional(),
   isHot: z.boolean().optional(),
   isDairy: z.boolean().optional(),
-
+  ingredientIds: z.array(z.string()).optional(),
   categoryId: z
     .string()
     .min(1, { message: 'یک دسته‌بندی را انتخاب کنید.' })

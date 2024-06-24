@@ -53,15 +53,20 @@ import {
   editProduct,
 } from '@/lib/actions/dashboard/products'
 import { createProductSchema } from '@/lib/schemas/dashboard/product'
+import { MultiSelect } from './MultiSelect'
 
 type ProductFormValues = z.infer<typeof createProductSchema>
 
 //if there is any billboard its Billboard, else its null
 interface ProductFormProps {
   //there is a chance to have no initial data and in fact we're creating one.
-  initialData: (Product & { images: { url: string }[] }) | null
+  initialData:
+    | (Product & { images: { url: string }[] } & {
+        ingredients: { name: string; id: string }[] | null
+      })
+    | null
   categories: Category[]
-  ingredients?: Partial<Ingredients>[] | null
+  ingredients: Ingredients[]
 }
 
 export const ProductForm: React.FC<ProductFormProps> = ({
@@ -105,7 +110,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({
           // price:+ initialData.price || 0 ,
 
           // images:initialData.images.map(image=>image.url)|| [],
-
+          ingredientIds:
+            initialData?.ingredients?.map((t: { id: string }) => t.id) || [],
           isHot: initialData.isHot || true,
           isDairy: initialData.isDairy || false,
           isArchived: initialData.isArchived,
@@ -123,7 +129,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
           categoryId: '',
           caffeine: 0,
           sugarContent: 0,
-
+          ingredientIds: [],
           isFeatured: false,
           isArchived: false,
           isHot: true,
@@ -630,30 +636,32 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             )}
           />
 
-          {/* <FormField
+          <FormField
             control={form.control}
-            name="ingredientId"
+            name="ingredientIds"
             render={({ field }) => (
               <FormItem className="max-w-md">
-                <FormLabel>نویسنده</FormLabel>
+                <FormLabel>مخلفات</FormLabel>
 
                 <MultiSelect
                   selected={field.value!}
-                  options={writers.map((writer) => {
-                    return { value: writer.id, label: writer.name }
+                  options={ingredients.map((ing) => {
+                    return {
+                      value: ing.id,
+                      label: ing.name,
+                    }
                   })}
-                  // onChange={console.log(form.getValues('writerId'))}
-
+                  // onChange={console.log(form.getValues('ingredientIds'))}
                   {...field}
                   // className="sm:w-[510px]"
                 />
 
                 <FormMessage>
-                  {form.getFieldState('writerId')?.error?.message}
+                  {form.getFieldState('ingredientIds')?.error?.message}
                 </FormMessage>
               </FormItem>
             )}
-          /> */}
+          />
           <FormField
             control={form.control}
             name="isHot"
