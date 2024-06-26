@@ -53,7 +53,16 @@ import {
   editProduct,
 } from '@/lib/actions/dashboard/products'
 import { createProductSchema } from '@/lib/schemas/dashboard/product'
-import { MultiSelect } from './MultiSelect'
+// import MultipleSelector from './MultiSelector'
+import {
+  MultiSelector,
+  MultiSelectorContent,
+  MultiSelectorInput,
+  MultiSelectorItem,
+  MultiSelectorList,
+  MultiSelectorTrigger,
+} from '@/components/ui/multi-select'
+// import { MultiSelect } from './MultiSelect'
 
 type ProductFormValues = z.infer<typeof createProductSchema>
 
@@ -80,7 +89,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   const router = useRouter()
   const path = usePathname()
 
-  // console.log({ writers, translators, editors, illustrators, photographers })
   const [open, setOpen] = useState(false)
   // const [files, setFiles] = useState(
   //   initialData?.images?.[0].url ? initialData.images?.[0].url : ''
@@ -652,16 +660,53 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             render={({ field }) => (
               <FormItem className="max-w-md">
                 <FormLabel>مخلفات</FormLabel>
+                {/* <MultipleSelector
+                  value={field.value!}
+                  onChange={field.onChange}
+                  {...field}
+                  defaultOptions={ingredients.map((ingredient) => ({
+                    value: ingredient.id,
+                    label: ingredient.name,
+                  }))}
+                  placeholder="مخلفات را اتخاب کنید..."
+                  emptyIndicator={
+                    <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
+                      بدون نتیجه
+                    </p>
+                  }
+                /> */}
 
-                <MultiSelect
-                  selected={field.value!}
+                {/* <MultiSelect
+                  onValueChange={() => [...field.value!]}
                   options={ingredients.map((ingredient) => {
                     return { value: ingredient.id, label: ingredient.name }
                   })}
                   // onChange={console.log(form.getValues('ingredientIds'))}
                   {...field}
                   // className="sm:w-[510px]"
-                />
+                /> */}
+                <MultiSelector
+                  onValuesChange={field.onChange}
+                  values={field.value!}
+                >
+                  <MultiSelectorTrigger>
+                    <MultiSelectorInput placeholder="Select people to invite" />
+                  </MultiSelectorTrigger>
+                  <MultiSelectorContent>
+                    <MultiSelectorList>
+                      {ingredients.map((ingredient) => (
+                        <MultiSelectorItem
+                          key={ingredient.id}
+                          value={ingredient.id}
+                        >
+                          <div className="flex items-center space-x-2">
+                            <span>{ingredient.name}</span>
+                          </div>
+                        </MultiSelectorItem>
+                      ))}
+                    </MultiSelectorList>
+                  </MultiSelectorContent>
+                </MultiSelector>
 
                 <FormMessage>
                   {form.getFieldState('ingredientIds')?.error?.message}
