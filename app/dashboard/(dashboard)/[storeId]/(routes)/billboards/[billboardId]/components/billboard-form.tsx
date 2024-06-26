@@ -2,11 +2,11 @@
 
 import * as z from 'zod'
 // import axios from 'axios'
-import { startTransition, useEffect, useState } from 'react'
+import { useState, useTransition } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 
-import { Trash, UploadCloud } from 'lucide-react'
+import { Loader, Trash, UploadCloud } from 'lucide-react'
 import { Billboard, Image } from '@prisma/client'
 import { useParams, usePathname, useRouter } from 'next/navigation'
 
@@ -59,6 +59,8 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
   const [files, setFiles] = useState<File[]>([])
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
+
+  const [isPending, startTransition] = useTransition()
 
   // const [files, setFiles] = useState<File | null>(null)
 
@@ -371,7 +373,14 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
           {/* <div className="md:grid md:grid-cols-3 gap-8"> */}
 
           {/* </div> */}
-          <SubmitButton className="ml-auto">{action}</SubmitButton>
+          {/* <SubmitButton className="ml-auto">{action}</SubmitButton> */}
+          <Button disabled={isPending} className="ml-auto">
+            {isPending ? (
+              <Loader className="animate-spin w-full h-full " />
+            ) : (
+              action
+            )}
+          </Button>
         </form>
       </Form>
     </>

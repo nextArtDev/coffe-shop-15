@@ -27,6 +27,7 @@ interface CreateProductFormState {
     images?: string[]
     isFeatured?: string[]
     isArchived?: string[]
+    ingredientIds?: string[]
     _form?: string[]
   }
 }

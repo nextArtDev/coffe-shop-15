@@ -180,11 +180,11 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     formData.append('caffeine', String(data.caffeine))
     formData.append('sugarContent', String(data.sugarContent))
 
-    // if (data.ingredientId && data.ingredientId.length > 0) {
-    //   for (let writers of data.ingredientId) {
-    //     formData.append('ingredientId', writers)
-    //   }
-    // }
+    if (data.ingredientIds && data.ingredientIds.length > 0) {
+      for (let writers of data.ingredientIds) {
+        formData.append('ingredientIds', writers)
+      }
+    }
     formData.append('categoryId', data.categoryId)
     // console.log(formData.get('categoryId'))
 
@@ -293,6 +293,11 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                   type: 'custom',
                   message: res?.errors.isArchived?.join(' و '),
                 })
+              } else if (res?.errors?.ingredientIds) {
+                form.setError('ingredientIds', {
+                  type: 'custom',
+                  message: res?.errors?.ingredientIds?.join(' و '),
+                })
               } else if (res?.errors?._form) {
                 // form.setError('root', {
                 //   type: 'custom',
@@ -374,6 +379,11 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 form.setError('isArchived', {
                   type: 'custom',
                   message: res?.errors.isArchived?.join(' و '),
+                })
+              } else if (res?.errors?.ingredientIds) {
+                form.setError('ingredientIds', {
+                  type: 'custom',
+                  message: res?.errors?.ingredientIds?.join(' و '),
                 })
               } else if (res?.errors?._form) {
                 // form.setError('root', {
@@ -645,11 +655,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 
                 <MultiSelect
                   selected={field.value!}
-                  options={ingredients.map((ing) => {
-                    return {
-                      value: ing.id,
-                      label: ing.name,
-                    }
+                  options={ingredients.map((ingredient) => {
+                    return { value: ingredient.id, label: ingredient.name }
                   })}
                   // onChange={console.log(form.getValues('ingredientIds'))}
                   {...field}
