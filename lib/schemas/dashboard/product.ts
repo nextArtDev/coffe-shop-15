@@ -84,7 +84,7 @@ export const createServerProductSchema = z.object({
       message: 'تنها حروف، اعداد و آندرلاین برای اسم مجاز است.',
     })
     .max(128, { message: 'نام شخص نمی‌تواند بیش از 128 حرف باشد.' }),
-
+  ingredientIds: z.array(z.string()).optional(),
   description: z
     .string()
     // .min(1, { message: 'توضیحات باید بیش از یک حرف باشد.' })

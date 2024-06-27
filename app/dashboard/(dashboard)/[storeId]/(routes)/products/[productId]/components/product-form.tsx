@@ -62,6 +62,8 @@ import {
   MultiSelectorList,
   MultiSelectorTrigger,
 } from '@/components/ui/multi-select'
+import Image from 'next/image'
+import { MultiSelect } from './MultiSelect'
 // import { MultiSelect } from './MultiSelect'
 
 type ProductFormValues = z.infer<typeof createProductSchema>
@@ -654,13 +656,14 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             )}
           />
 
-          <FormField
-            control={form.control}
-            name="ingredientIds"
-            render={({ field }) => (
-              <FormItem className="max-w-md">
-                <FormLabel>مخلفات</FormLabel>
-                {/* <MultipleSelector
+          {ingredients.length > 0 && (
+            <FormField
+              control={form.control}
+              name="ingredientIds"
+              render={({ field }) => (
+                <FormItem className="max-w-md">
+                  <FormLabel>مخلفات</FormLabel>
+                  {/* <MultipleSelector
                   value={field.value!}
                   onChange={field.onChange}
                   {...field}
@@ -676,28 +679,28 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                   }
                 /> */}
 
-                {/* <MultiSelect
-                  onValueChange={() => [...field.value!]}
-                  options={ingredients.map((ingredient) => {
-                    return { value: ingredient.id, label: ingredient.name }
-                  })}
-                  // onChange={console.log(form.getValues('ingredientIds'))}
-                  {...field}
-                  // className="sm:w-[510px]"
-                /> */}
-                <MultiSelector
+                  <MultiSelect
+                    selected={field.value!}
+                    options={ingredients.map((ingredient) => {
+                      return { value: ingredient.id, label: ingredient.name }
+                    })}
+                    // onChange={console.log(form.getValues('ingredientIds'))}
+                    {...field}
+                    // className="sm:w-[510px]"
+                  />
+                  {/* <MultiSelector
                   onValuesChange={field.onChange}
                   values={field.value!}
                 >
                   <MultiSelectorTrigger>
-                    <MultiSelectorInput placeholder="Select people to invite" />
+                    <MultiSelectorInput placeholder="انتخاب مخلفات..." />
                   </MultiSelectorTrigger>
                   <MultiSelectorContent>
                     <MultiSelectorList>
                       {ingredients.map((ingredient) => (
                         <MultiSelectorItem
                           key={ingredient.id}
-                          value={ingredient.id}
+                          value={ingredient.name}
                         >
                           <div className="flex items-center space-x-2">
                             <span>{ingredient.name}</span>
@@ -706,14 +709,15 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                       ))}
                     </MultiSelectorList>
                   </MultiSelectorContent>
-                </MultiSelector>
+                </MultiSelector> */}
 
-                <FormMessage>
-                  {form.getFieldState('ingredientIds')?.error?.message}
-                </FormMessage>
-              </FormItem>
-            )}
-          />
+                  <FormMessage>
+                    {form.getFieldState('ingredientIds')?.error?.message}
+                  </FormMessage>
+                </FormItem>
+              )}
+            />
+          )}
           <FormField
             control={form.control}
             name="isHot"

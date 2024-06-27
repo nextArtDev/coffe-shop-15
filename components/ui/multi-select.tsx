@@ -120,7 +120,7 @@ const MultiSelector = ({
         }
       }
     },
-    [value, inputValue, activeIndex, loop]
+    [value, dir, activeIndex, loop, inputValue.length, onValueChange]
   )
 
   return (
