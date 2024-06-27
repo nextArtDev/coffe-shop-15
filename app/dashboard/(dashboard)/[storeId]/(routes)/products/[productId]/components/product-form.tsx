@@ -64,6 +64,7 @@ import {
 } from '@/components/ui/multi-select'
 import Image from 'next/image'
 import { MultiSelect } from './MultiSelect'
+import MultipleSelector from './MultiSelector'
 // import { MultiSelect } from './MultiSelect'
 
 type ProductFormValues = z.infer<typeof createProductSchema>
@@ -664,22 +665,20 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 <FormItem className="max-w-md">
                   <FormLabel>مخلفات</FormLabel>
                   {/* <MultipleSelector
-                  value={field.value!}
-                  onChange={field.onChange}
-                  {...field}
-                  defaultOptions={ingredients.map((ingredient) => ({
-                    value: ingredient.id,
-                    label: ingredient.name,
-                  }))}
-                  placeholder="مخلفات را اتخاب کنید..."
-                  emptyIndicator={
-                    <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
-                      بدون نتیجه
-                    </p>
-                  }
-                /> */}
+                    {...field}
+                    defaultOptions={ingredients.map((ingredient) => ({
+                      value: ingredient.id,
+                      label: ingredient.name,
+                    }))}
+                    placeholder="مخلفات را اتخاب کنید..."
+                    emptyIndicator={
+                      <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
+                        بدون نتیجه
+                      </p>
+                    }
+                  /> */}
 
-                  <MultiSelect
+                  {/* <MultiSelect
                     selected={field.value!}
                     options={ingredients.map((ingredient) => {
                       return { value: ingredient.id, label: ingredient.name }
@@ -687,29 +686,29 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                     // onChange={console.log(form.getValues('ingredientIds'))}
                     {...field}
                     // className="sm:w-[510px]"
-                  />
-                  {/* <MultiSelector
-                  onValuesChange={field.onChange}
-                  values={field.value!}
-                >
-                  <MultiSelectorTrigger>
-                    <MultiSelectorInput placeholder="انتخاب مخلفات..." />
-                  </MultiSelectorTrigger>
-                  <MultiSelectorContent>
-                    <MultiSelectorList>
-                      {ingredients.map((ingredient) => (
-                        <MultiSelectorItem
-                          key={ingredient.id}
-                          value={ingredient.name}
-                        >
-                          <div className="flex items-center space-x-2">
-                            <span>{ingredient.name}</span>
-                          </div>
-                        </MultiSelectorItem>
-                      ))}
-                    </MultiSelectorList>
-                  </MultiSelectorContent>
-                </MultiSelector> */}
+                  /> */}
+                  <MultiSelector
+                    onValuesChange={field.onChange}
+                    values={field.value!}
+                  >
+                    <MultiSelectorTrigger>
+                      <MultiSelectorInput placeholder="انتخاب مخلفات..." />
+                    </MultiSelectorTrigger>
+                    <MultiSelectorContent>
+                      <MultiSelectorList>
+                        {ingredients.map((ingredient) => (
+                          <MultiSelectorItem
+                            key={ingredient.id}
+                            value={ingredient.name}
+                          >
+                            <div className="flex items-center space-x-2">
+                              <span>{ingredient.name}</span>
+                            </div>
+                          </MultiSelectorItem>
+                        ))}
+                      </MultiSelectorList>
+                    </MultiSelectorContent>
+                  </MultiSelector>
 
                   <FormMessage>
                     {form.getFieldState('ingredientIds')?.error?.message}

@@ -164,6 +164,7 @@ const MultiSelectorTrigger = forwardRef<
 
   return (
     <div
+      dir="rtl"
       ref={ref}
       className={cn(
         'flex flex-wrap gap-1 p-1 py-2 border border-muted rounded-lg bg-background',
@@ -248,13 +249,13 @@ const MultiSelectorList = forwardRef<
     <CommandList
       ref={ref}
       className={cn(
-        'p-2 flex flex-col gap-2 rounded-md scrollbar-thin scrollbar-track-transparent transition-colors scrollbar-thumb-muted-foreground dark:scrollbar-thumb-muted scrollbar-thumb-rounded-lg w-full absolute bg-background shadow-md z-10 border border-muted top-0',
+        'p-2 flex flex-col gap-2 rounded-md scrollbar-thin scrollbar-track-transparent transition-colors scrollbar-thumb-muted-foreground dark:scrollbar-thumb-muted scrollbar-thumb-rounded-lg w-full absolute bg-background shadow-md z-20 border border-muted top-0',
         className
       )}
     >
       {children}
       <CommandEmpty>
-        <span className="text-muted-foreground">No results found</span>
+        <span className="text-muted-foreground">بدون نتیجه</span>
       </CommandEmpty>
     </CommandList>
   )
