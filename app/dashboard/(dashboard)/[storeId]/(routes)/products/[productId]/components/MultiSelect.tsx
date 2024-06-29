@@ -42,7 +42,7 @@ function MultiSelect({
     onChange(selected.filter((i) => i !== item))
   }
   function getLabel(value: string) {
-    return options?.find((option) => option.value === value)?.label
+    return options.find((option) => option.value === value)?.label
   }
 
   return (
@@ -93,7 +93,7 @@ function MultiSelect({
           <CommandInput placeholder="جست و جو" />
           <CommandEmpty>نتیجه‌ای یافت نشد.</CommandEmpty>
           <CommandGroup className="max-h-64 overflow-auto">
-            {options?.map((option) => (
+            {options.map((option) => (
               <CommandItem
                 key={option.value}
                 onSelect={() => {

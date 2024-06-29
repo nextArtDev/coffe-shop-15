@@ -44,6 +44,7 @@ export async function createProduct(
     sugarContent: formData.get('sugarContent'),
     categoryId: formData.get('categoryId'),
     image: formData.getAll('images'),
+    ingredientIds: formData.getAll('ingredientIds'),
     price: formData.get('price'),
     isFeatured: formData.get('isFeatured'),
     isArchived: formData.get('isArchived'),
@@ -55,7 +56,7 @@ export async function createProduct(
   //   console.log(formData.getAll('writerId'))
   //   console.log(formData.get('categoryId'))
   //   console.log(formData.get('price'))
-  //   console.log(formData.getAll('image'))
+  // console.log(formData.getAll('ingredientIds'))
   if (!result.success) {
     console.log(result.error.flatten().fieldErrors)
     return {
@@ -63,6 +64,7 @@ export async function createProduct(
     }
   }
 
+  console.log(result.data.ingredientIds)
   const session = await auth()
   if (!session || !session.user || session.user.role !== 'ADMIN') {
     return {
@@ -152,6 +154,11 @@ export async function createProduct(
             id: id,
           })),
         },
+        ingredients: {
+          connect: result.data?.ingredientIds?.map((id) => ({
+            id: id,
+          })),
+        },
         storeId,
       },
     })
@@ -188,6 +195,7 @@ export async function editProduct(
     caffeine: formData.get('caffeine'),
     sugarContent: formData.get('sugarContent'),
     categoryId: formData.get('categoryId'),
+    ingredientIds: formData.get('ingredientIds'),
     images: formData.getAll('images'),
     price: formData.get('price'),
     isFeatured: formData.get('isFeatured'),
@@ -204,6 +212,7 @@ export async function editProduct(
       errors: result.error.flatten().fieldErrors,
     }
   }
+  console.log(result.data.ingredientIds)
   // console.log(result.data.isArchived)
   // console.log(result.data.isFeatured)
   const session = await auth()
@@ -313,6 +322,14 @@ export async function editProduct(
               id: image.id,
             })),
           },
+          ingredients: {
+            //  connect: result.data.writerId?.map((id) => ({ id: id })),
+            disconnect: isExisting.ingredients.map(
+              (ingredient: { id: string }) => ({
+                id: ingredient.id,
+              })
+            ),
+          },
         },
       })
       await prisma.product.update({
@@ -336,6 +353,11 @@ export async function editProduct(
               id: id,
             })),
           },
+          ingredients: {
+            connect: result.data?.ingredientIds?.map((id) => ({
+              id: id,
+            })),
+          },
           storeId,
         },
       })
@@ -356,6 +378,11 @@ export async function editProduct(
           isDairy: isDairyBoolean,
           isFeatured: isFeaturedBoolean,
           isArchived: isArchivedBoolean,
+          ingredients: {
+            connect: result.data?.ingredientIds?.map((id) => ({
+              id: id,
+            })),
+          },
           // images: result.data.images,
           storeId,
         },

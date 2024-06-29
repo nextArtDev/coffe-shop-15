@@ -64,7 +64,7 @@ import {
 } from '@/components/ui/multi-select'
 import Image from 'next/image'
 import { MultiSelect } from './MultiSelect'
-import MultipleSelector from './MultiSelector'
+import MultipleSelector, { Option } from './MultiSelector'
 // import { MultiSelect } from './MultiSelect'
 
 type ProductFormValues = z.infer<typeof createProductSchema>
@@ -121,8 +121,10 @@ export const ProductForm: React.FC<ProductFormProps> = ({
           // price:+ initialData.price || 0 ,
 
           // images:initialData.images.map(image=>image.url)|| [],
-          ingredientIds:
-            initialData?.ingredients?.map((t: { id: string }) => t.id) || [],
+          ingredientIds: initialData?.ingredients?.map(
+            (t: { id: string }) => t.id
+          ),
+
           isHot: initialData.isHot || true,
           isDairy: initialData.isDairy || false,
           isArchived: initialData.isArchived,
@@ -192,8 +194,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     formData.append('sugarContent', String(data.sugarContent))
 
     if (data.ingredientIds && data.ingredientIds.length > 0) {
-      for (let writers of data.ingredientIds) {
-        formData.append('ingredientIds', writers)
+      for (let ingredientsIds of data.ingredientIds) {
+        formData.append('ingredientIds', ingredientsIds)
       }
     }
     formData.append('categoryId', data.categoryId)
@@ -666,10 +668,13 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                   <FormLabel>مخلفات</FormLabel>
                   {/* <MultipleSelector
                     {...field}
-                    defaultOptions={ingredients.map((ingredient) => ({
-                      value: ingredient.id,
-                      label: ingredient.name,
-                    }))}
+                    onChange={field.onChange}
+                    defaultOptions={
+                      ingredients.map((ingredient) => ({
+                        value: ingredient.id,
+                        label: ingredient.name,
+                      })) as Option[]
+                    }
                     placeholder="مخلفات را اتخاب کنید..."
                     emptyIndicator={
                       <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
@@ -699,7 +704,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                         {ingredients.map((ingredient) => (
                           <MultiSelectorItem
                             key={ingredient.id}
-                            value={ingredient.name}
+                            value={ingredient.id}
                           >
                             <div className="flex items-center space-x-2">
                               <span>{ingredient.name}</span>
