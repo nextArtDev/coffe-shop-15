@@ -121,9 +121,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
           // price:+ initialData.price || 0 ,
 
           // images:initialData.images.map(image=>image.url)|| [],
-          ingredientIds: initialData?.ingredients?.map(
-            (t: { id: string }) => t.id
-          ),
+          ingredientIds: initialData?.ingredients?.map((t) => t.id),
 
           isHot: initialData.isHot || true,
           isDairy: initialData.isDairy || false,
@@ -206,6 +204,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         formData.append('images', data.images[i])
       }
     }
+    console.log(formData.getAll('images'))
     // formData.append('image', data.image)
     // if (data.isFeatured) {
     //   formData.append('isFeatured', data.isFeatured)

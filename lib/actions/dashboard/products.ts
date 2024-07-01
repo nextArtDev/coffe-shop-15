@@ -43,7 +43,7 @@ export async function createProduct(
     caffeine: formData.get('caffeine'),
     sugarContent: formData.get('sugarContent'),
     categoryId: formData.get('categoryId'),
-    image: formData.getAll('images'),
+    images: formData.getAll('images'),
     ingredientIds: formData.getAll('ingredientIds'),
     price: formData.get('price'),
     isFeatured: formData.get('isFeatured'),
@@ -64,7 +64,7 @@ export async function createProduct(
     }
   }
 
-  console.log(result.data.ingredientIds)
+  console.log('server', result.data.images)
   const session = await auth()
   if (!session || !session.user || session.user.role !== 'ADMIN') {
     return {
@@ -108,7 +108,7 @@ export async function createProduct(
     if (isExisting) {
       return {
         errors: {
-          _form: ['کتاب با این نام و شابک موجود است!'],
+          _form: ['محصول با این نام موجود است'],
         },
       }
     }
@@ -127,7 +127,7 @@ export async function createProduct(
         imageIds.push(res.imageId)
       }
     }
-    // console.log(imageIds)
+    console.log(imageIds)
     // console.log('data', result.data)
     product = await prisma.product.create({
       data: {
@@ -154,15 +154,17 @@ export async function createProduct(
             id: id,
           })),
         },
+
         ingredients: {
           connect: result.data?.ingredientIds?.map((id) => ({
             id: id,
           })),
         },
+
         storeId,
       },
     })
-    // console.log({ product })
+    console.log({ product })
   } catch (err: unknown) {
     if (err instanceof Error) {
       return {
@@ -195,7 +197,7 @@ export async function editProduct(
     caffeine: formData.get('caffeine'),
     sugarContent: formData.get('sugarContent'),
     categoryId: formData.get('categoryId'),
-    ingredientIds: formData.get('ingredientIds'),
+    ingredientIds: formData.getAll('ingredientIds'),
     images: formData.getAll('images'),
     price: formData.get('price'),
     isFeatured: formData.get('isFeatured'),
@@ -212,7 +214,7 @@ export async function editProduct(
       errors: result.error.flatten().fieldErrors,
     }
   }
-  console.log(result.data.ingredientIds)
+  // console.log(result.data.ingredientIds)
   // console.log(result.data.isArchived)
   // console.log(result.data.isFeatured)
   const session = await auth()
@@ -230,7 +232,7 @@ export async function editProduct(
       },
     }
   }
-  // console.log(result)
+  console.log(result.data.images)
 
   let product: Product
   try {
@@ -276,15 +278,22 @@ export async function editProduct(
         },
       }
     }
-    // await prisma.product.update({
-    //   where: {
-    //     id: productId,
-    //     storeId,
-    //   },
-    //   data: {
-    //     // ingredients:
-    //   },
-    // })
+    await prisma.product.update({
+      where: {
+        id: productId,
+        storeId,
+      },
+      data: {
+        ingredients: {
+          //  connect: result.data.writerId?.map((id) => ({ id: id })),
+          disconnect: isExisting.ingredients.map(
+            (ingredient: { id: string }) => ({
+              id: ingredient.id,
+            })
+          ),
+        },
+      },
+    })
 
     // console.log(isExisting)
     // console.log(billboard)
@@ -321,14 +330,6 @@ export async function editProduct(
             disconnect: isExisting.images.map((image: { id: string }) => ({
               id: image.id,
             })),
-          },
-          ingredients: {
-            //  connect: result.data.writerId?.map((id) => ({ id: id })),
-            disconnect: isExisting.ingredients.map(
-              (ingredient: { id: string }) => ({
-                id: ingredient.id,
-              })
-            ),
           },
         },
       })
