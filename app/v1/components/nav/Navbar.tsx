@@ -15,6 +15,8 @@ import {
 } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import StickyNav from './StickyNav'
+import { cn } from '@/lib/utils'
+import { buttonVariants } from '@/components/ui/button'
 
 let clamp = (number: number, min: number, max: number) =>
   Math.min(Math.max(number, min), max)
@@ -121,12 +123,12 @@ const Navbar = () => {
                 opacity: 0,
               }))
             }}
-            className=" flex flex-1 py-1 justify-center  max-sm:hidden "
+            className=" flex flex-1 pb-2.5 justify-center  max-sm:hidden "
           >
             {navLists.map((nav) => (
               <motion.li
                 key={nav.id}
-                className="px-5 text-sm cursor-pointer text-gray hover:text-white transition-all"
+                className=" px-5 text-sm cursor-pointer text-gray hover:text-white transition-all"
                 style={{
                   // eslint-disable-next-line react-hooks/rules-of-hooks
                   opacity: useTransform(
@@ -139,11 +141,19 @@ const Navbar = () => {
                     scrollYBoundedProgressThrottled,
                     [0, 1],
                     // [max , min] height
-                    [30, 10]
+                    [40, 5]
                   ),
                 }}
               >
-                {nav.link}
+                <Link
+                  href={'/'}
+                  className={cn(
+                    buttonVariants({ variant: 'ghost' }),
+                    'backdrop-blur-2xl hover:backdrop-blur-sm hover:bg-transparent rounded-full -mt-0.5'
+                  )}
+                >
+                  {nav.link}
+                </Link>
               </motion.li>
             ))}
           </motion.ul>
