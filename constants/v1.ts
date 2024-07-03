@@ -1,5 +1,18 @@
-export const navLists = ['منوی گرم', 'منوی سرد', 'صبحانه', 'کیک تولد']
-
+export const navLists = [
+  { id: 1, link: 'منوی گرم' },
+  {
+    id: 2,
+    link: 'منوی سرد',
+  },
+  {
+    id: 3,
+    link: 'صبحانه',
+  },
+  {
+    id: 4,
+    link: 'کیک تولد',
+  },
+]
 export const hightlightsSlides = [
   {
     id: 1,
