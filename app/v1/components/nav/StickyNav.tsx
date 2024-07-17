@@ -47,7 +47,7 @@ const StickyNav: FC<StickyNavProps> = ({
       transition={{ duration: 0.2 }}
       //   className=" fixed top-0 z-10 flex w-full justify-center pt-3"
       className={`fixed ${
-        isTop ? 'top-0 pt-3' : '-bottom-0 pb-0.5'
+        isTop ? 'top-0 pt-3' : '-bottom-0 -pb-0'
       } z-10 flex w-full justify-center `}
     >
       <nav
