@@ -18,26 +18,25 @@ export const sendSms = async (values: z.infer<typeof PhoneSchema>) => {
 
   const { phone } = validatedFields.data
 
-  const client = new TrezSMSClient(
-    process.env.SMS_USERNAME!,
-    process.env.SMS_PASSWORD!
-  )
-
   try {
+    const client = new TrezSMSClient(
+      process.env.SMS_USERNAME!,
+      process.env.SMS_PASSWORD!
+    )
     console.log({ phone, verificationCode })
-    // const messageId = await client.manualSendCode(
-    //   phone,
-    //   `کد تایید شما: ${
-    //     verificationCode as number
-    //   } \n مدت اعتبار این کد ۲ دقیقه می‌باشد`
-    // )
+    const messageId = await client.manualSendCode(
+      phone,
+      `کد تایید شما: ${
+        verificationCode as number
+      } \n مدت اعتبار این کد ۲ دقیقه می‌باشد`
+    )
 
-    // if (messageId <= 2000) {
-    //   return {
-    //     error: 'ارسال کد تایید با خطا مواجه شد لطفا دوباره تلاش نمایید',
-    //     // verificationCode: null,
-    //   }
-    // }
+    if (messageId <= 2000) {
+      return {
+        error: 'ارسال کد تایید با خطا مواجه شد لطفا دوباره تلاش نمایید',
+        // verificationCode: null,
+      }
+    }
     return { success: 'کد تایید به شماره شما ارسال شد.', verificationCode }
   } catch (error) {
     console.log(error)
